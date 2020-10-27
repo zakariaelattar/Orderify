@@ -1,31 +1,27 @@
 import React, { Component } from 'react';
 
 class FormSettings extends Component {
+    handleFormPlacementChange = (e) => {
+        console.log(e.target.value);
+    }
+
     render() {
         return (
             <div className="form-group"> 
-            <p>Here's how your order form will look like</p>
+           
              <p className="text-muted">You may add, edit, drag'n'drop and remove fields on this page</p>
            <hr/>
            {/* Form placement */}
            <div>
            <h6>Form placement</h6>
-            <div className="form-check">
-            <input type="radio" name="placement_radio" className="form-check-input" id="disable_placement"/>
-            <label htmlFor="disable_placement">Disable</label>
-            </div>
-            <div className="form-check">
-            <input type="radio" name="placement_radio" className="form-check-input" id="placement_product"/>
-            <label htmlFor="placement_product">Enabled on Product page only</label>
-            </div>
-            <div className="form-check">
-            <input type="radio" name="placement_radio" className="form-check-input" id="placement_cart"/>
-            <label htmlFor="placement_cart">Enabled on Cart page only</label>
-            </div>
-            <div className="form-check">
-            <input type="radio" name="placement_radio" className="form-check-input" id="placement_both"/>
-            <label htmlFor="placement_both">Enabled on both Product and Cart pages</label>
-            </div>
+            <select name="" id="" className="form-control" onChange={this.handleFormPlacementChange}>
+                <option value="disable_placement">Disable</option>
+                <option value="enable_on_product_page_only">Enabled on Product page only</option>
+                <option value="enabled_on_cart_page_only">Enabled on Cart page only</option>
+                <option value="enable_on_both">Enabled on both Product and Cart pages</option>
+                <option value=""></option>
+            </select>
+
            </div>
            <hr/>
             {/* END Form placement */}
@@ -72,8 +68,6 @@ class FormSettings extends Component {
            {/* END more options */}
 
            {/*  Form messages  */}
-            <label htmlFor="header_text">Form header text</label>
-            <input type="text" className="form-control" value="Submit Your Order"/>
 
             <label htmlFor="button_text">Button text</label>
             <input type="color" className="form-control" value="Submit Inquiry"/>

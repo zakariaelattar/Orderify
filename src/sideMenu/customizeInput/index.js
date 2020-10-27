@@ -26,7 +26,7 @@ export default class CostumizeInput extends Component {
             <Router>
             <div>
             <Switch>
-                    <Route path="/sideMenu/costumizeInput/FirstName" component={FirstName} />
+                    <Route path="/sideMenu/costumizeInput/FirstName" component={() => <FirstName addField={this.props.addField} />} />
                     <Route path="/sideMenu/costumizeInput/LastName" component={LastName} />
                     <Route path="/sideMenu/costumizeInput/Country" component={Country} />
                     <Route path="/sideMenu/costumizeInput/Checkbox" component={Checkbox} />
@@ -39,8 +39,8 @@ export default class CostumizeInput extends Component {
                     <Route path="/sideMenu/costumizeInput/Heading" component={Heading} />
             </Switch>
 
-                <Link  class="btn btn-primary mt-4 float-right" to=" ">Back</Link>
-                <Link className="btn btn-success mt-4 float-left" to="/sideMenu/SelectInput">Save field</Link>
+                {/* <Link  class="btn btn-primary mt-4 float-right" to=" ">Back</Link>
+                <Link className="btn btn-success mt-4 float-left" to="/sideMenu/SelectInput">Save field</Link> */}
 
             </div>
 

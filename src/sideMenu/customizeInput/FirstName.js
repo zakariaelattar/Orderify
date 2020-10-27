@@ -1,4 +1,10 @@
 import React, { Component } from 'react'
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+  } from "react-router-dom";
 
 export default class FirstName extends Component {
 
@@ -15,31 +21,28 @@ export default class FirstName extends Component {
     }
 
     handleTitleChange = (e) => {
-        console.log(e.target.value);
-        this.state.title = e;
+        console.log(this.props.addField);
+
+        this.state.title = e.target.value;
     }
     handleHideTitleChange = (e) => {
-        console.log(e.target.value);
-        this.state.hide_title = e;
+        this.state.hide_title = e.target.value;
     }
     handlePlaceholderChange = (e) => {
-        console.log(e.target.value);
-        this.state.placeholder = e;
+        this.state.placeholder = e.target.value;
     }
     handleRequiredChange = (e) => {
-        console.log(e.target.value);
-        this.state.required = e;
+        this.state.required = e.target.value;
     }
     handleErrorMessageChange = (e) => {
-        console.log(e.target.value);
-        this.state.error_message = e;
+        this.state.error_message = e.target.value;
     }
     handleRelatedFieldChange = (e) => {
-        console.log(e.target.value);
-        this.state.related_field = e;
+        this.state.related_field = e.target.value;
     }
     render() {
         return (
+            <Router>
             <div className="form-group">
             <label htmlFor="title">Title</label>
             <input onChange={this.handleTitleChange} type="text" className="form-control"/>
@@ -64,10 +67,14 @@ export default class FirstName extends Component {
           <select name="" id="related_field" onChange={this.handleRelatedFieldChange} className="form-control">
           <option value="country">Country</option>
           <option value="title">Tiltle</option>
-
           </select>
-        
+          <Link 
+          className="mt-5 btn btn-success" 
+          onClick={()=>this.props.addField(this.state)}
+          to="/FormEditor">Save Field</Link>
+
             </div>
+            </Router>
         )
     }
 }

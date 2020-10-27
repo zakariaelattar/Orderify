@@ -27,7 +27,7 @@ constructor(props) {
                 <div className="container mt-5">
                 <Switch>
                 <Route path="/sideMenu/SelectInput" component={() => <SelectInput items={this.props.fields} />} />
-                <Route path="/sideMenu/CostumizeInput" component={() => <CostumizeInput items={this.props.fields} />} />
+                <Route path="/sideMenu/CostumizeInput" component={() => <CostumizeInput items={this.props.fields} addField={this.props.addField} />} />
                 </Switch>
                 </div>
             </div>
