@@ -10,6 +10,10 @@ import {
   import ExportOrders from './ExportOrders';
 
 export default class index extends Component {
+
+  constructor(props) {
+    super(props);
+  }
     render() {
         return (
             <Router>
@@ -31,9 +35,9 @@ export default class index extends Component {
 
           {/* adding fields in this section */}
     <Switch>
-      <Route path="/ExportOrders" component={ExportOrders} />
-      <Route path="/FormEditor" component={FormEditor} />
-      <Route path="/FormSettings" component={FormSettings} />
+      <Route path="/ExportOrders" component={() => <ExportOrders  />}  />
+      <Route path="/FormEditor" component={() => <FormEditor fields={this.props.fields} />}  />
+      <Route path="/FormSettings" component={() => <FormSettings  />}  />
     </Switch>
 
 {/* End add field section */}

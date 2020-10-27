@@ -7,7 +7,13 @@ import {
   } from "react-router-dom";
 import CostumizeInput from './customizeInput';
 import SelectInput from './SelectInput';
+
 export default class index extends Component {
+constructor(props) {
+    super(props);
+
+}
+
     render() {
         return (
             <Router>
@@ -20,8 +26,8 @@ export default class index extends Component {
 
                 <div className="container mt-5">
                 <Switch>
-                <Route path="/sideMenu/SelectInput" component={SelectInput} />
-                <Route path="/sideMenu/CostumizeInput" component={CostumizeInput} />
+                <Route path="/sideMenu/SelectInput" component={() => <SelectInput items={this.props.fields} />} />
+                <Route path="/sideMenu/CostumizeInput" component={() => <CostumizeInput items={this.props.fields} />} />
                 </Switch>
                 </div>
             </div>

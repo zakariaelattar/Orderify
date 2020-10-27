@@ -17,6 +17,10 @@ import {
   import TextArea from "./TextArea";
   import Heading from "./Heading";
 export default class CostumizeInput extends Component {
+    constructor(props) {
+        super(props);
+ 
+    }
     render() {
         return (
             <Router>
@@ -36,8 +40,8 @@ export default class CostumizeInput extends Component {
             </Switch>
 
                 <Link  class="btn btn-primary mt-4 float-right" to=" ">Back</Link>
+                <Link className="btn btn-success mt-4 float-left" to="/sideMenu/SelectInput">Save field</Link>
 
-                <Link className="btn btn-success mt-4 float-left">Save field</Link>
             </div>
 
             </Router>
