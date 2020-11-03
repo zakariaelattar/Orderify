@@ -2,24 +2,33 @@ import React, {useState, useCallback} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import SideMenu from "./sideMenu";
 import MainWrapper from "./mainWrapper";
-
+import Connect from './services/Connect';
 export default function App() {
  
+  new Connect();
+  
+  console.log();
+
    const [fields, setFields] = useState([
 
     {
       title: "First name",
       placeholder: "This is the first item",
+      required:1
       
     },
     {
       title: "First name",
       placeholder: "This is the first item",
+      required:1
+
       
     },
     {
       title: "First name",
       placeholder: "This is the first item",
+      required:1
+
       
     }
 

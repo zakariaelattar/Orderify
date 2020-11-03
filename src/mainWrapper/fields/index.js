@@ -5,7 +5,8 @@ export default class Fields extends Component {
         super(props);
         this.state={
             title: this.props.field.title,
-            placeholder: this.props.field.placeholder
+            placeholder: this.props.field.placeholder,
+            required:this.props.required
         }
         console.log(this.props);
     }
@@ -18,6 +19,7 @@ export default class Fields extends Component {
             <input
              type="text" 
             placeholder={this.state.placeholder}
+            {...this.state.required == 1 ? "required" : null}
             className="form-control"
 
             

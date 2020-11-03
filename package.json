@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "description": "A Polaris example application using create-react-app",
+  "proxy": "http://localhost:3001",
   "license": "MIT",
   "scripts": {
     "start": "react-scripts start",
@@ -11,13 +12,31 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@shopify/koa-shopify-graphql-proxy": "^4.0.4",
     "@shopify/polaris": "^5.1.0",
     "@shopify/polaris-icons": "^3.12.0",
+    "apollo-boost": "^0.4.9",
+    "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
+    "cookie": "^0.4.1",
+    "crypto": "^1.0.1",
+    "concurrently": "^5.3.0",
+    "dotenv": "^8.0.0",
+    "ejs": "^2.6.2",
+    "express": "^4.17.1",
+    "graphql": "^15.4.0",
+    "http-proxy-middleware": "^1.0.6",
+    "nonce": "^1.0.4",
+    "path": "^0.12.7",
+    "query-string": "^6.13.6",
     "react": "^16.12.0",
+    "react-apollo": "^3.1.5",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "shopify-node-api": "^1.11.0"
   },
   "devDependencies": {
     "enzyme": "^3.11.0",

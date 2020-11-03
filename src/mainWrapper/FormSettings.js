@@ -4,6 +4,27 @@ class FormSettings extends Component {
     handleFormPlacementChange = (e) => {
         console.log(e.target.value);
     }
+    handleNoticeChange = (e) => {
+        console.log(e.target.value);
+    }
+    handleReloadPageAfterCloseChange = (e) => {
+        console.log(e.target.value);
+    }
+    handleFormPlacementChange = (e) => {
+        console.log(e.target.value);
+    }
+    handleFormPlacementChange = (e) => {
+        console.log(e.target.value);
+    }
+    handleFormPlacementChange = (e) => {
+        console.log(e.target.value);
+    }
+    handleFormPlacementChange = (e) => {
+        console.log(e.target.value);
+    }
+    handleFormPlacementChange = (e) => {
+        console.log(e.target.value);
+    }
 
     render() {
         return (

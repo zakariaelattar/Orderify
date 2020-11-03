@@ -10,7 +10,8 @@ export default class SelectInput extends Component {
         super(props);
         this.state ={
             selected_field : "FirstName",
-            field_custom_path:"/sideMenu/costumizeInput/FirstName"
+            field_custom_path:"/sideMenu/costumizeInput/FirstName",
+            
         }
         console.log(this.props.items);
     }
