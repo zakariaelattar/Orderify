@@ -3,11 +3,17 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import SideMenu from "./sideMenu";
 import MainWrapper from "./mainWrapper";
 import Connect from './services/Connect';
+import axios from 'axios';
+
+import queryString from 'query-string';
+import getOrders from './services/Order';
+
 export default function App() {
  
-  new Connect();
-  
-  console.log();
+  // new Connect();
+  var url = window.location.href;
+  var accessToken =url.substring(35);
+  axios.get("api/orders");
 
    const [fields, setFields] = useState([
 
