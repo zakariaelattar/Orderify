@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "react-scripts start",
+    "s":"concurrently \"nodemon src/server.js \" \" npm start \"",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

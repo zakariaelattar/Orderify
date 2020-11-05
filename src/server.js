@@ -1,5 +1,6 @@
 const dotenv = require('dotenv').config();
 const path = require("path");
+const axios = require('axios');
 const express = require('express');
 const ejs = require('ejs');
 const app = express();
@@ -12,31 +13,22 @@ const request = require('request-promise');
 app.set('view engine','ejs');
 const apiKey = "e25c4d9a47c79d4667c1f00a6712a7c8";
 const apiSecret = "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";
-const scopes = 'read_products';
-const forwardingAddress = "https://20d1c1246c6d.ngrok.io"; // Replace this with your HTTPS Forwarding address
+const scopes = 'read_products read_orders read_draft_orders write_draft_orders';
+const forwardingAddress = "https://4b38bd82a04b.ngrok.io"; // Replace this with your HTTPS Forwarding address
+const ordersService = require("./services/Order");
 
 app.get('/', (req, res) => {
   res.send('hello world');
 });
-app.get('api/orders', (req, res) => {
+app.get('/api/orders', (req, res) => {
+  ordersService.getOrders(req,res);
+console.log("headerz: "+req.headers["x-shopify-access-token"]);
+});
+app.post('/api/orders', (req, res) => {
+  ordersService.addOrder(req,res);
+  console.log("header2: "+req.headers["x-shopify-access-token"]);
 
-    console.log("/////////////////////////////");
 
-         console.log(accessToken);
-        const shopRequestUrl = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/order.json';
-         const shopRequestHeaders = {
-          'X-Shopify-Access-Token': accessToken,
-        };
-  
-       axios.get(shopRequestUrl, { headers: shopRequestHeaders })
-        .then((shopResponse) => {
-          
-           console.log(shopResponse);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    
  
 });
 
