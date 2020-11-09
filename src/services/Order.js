@@ -13,7 +13,7 @@ console.log(shopRequestHeaders);
    axios.get(shopRequestUrl, { headers: shopRequestHeaders })
     .then((shopResponse) => {
       
-       console.log(shopResponse.data);
+       console.log(shopResponse.config);
     })
     .catch((error) => {
         console.log(error);
@@ -31,24 +31,34 @@ exports.addOrder = (req,res) => {
     };
 
 
-   axios.post(shopRequestUrl, { headers: shopRequestHeaders },{
-    
-    
-        "order": {
-          "line_items": [
-            {
-              "variant_id": 447654529,
-              "quantity": 1
-            }
-          ]
-        }
-      
-      })
+   axios.post(shopRequestUrl,
+    {
+      "order": {
+        "line_items": [
+          {
+            "title": "Custom Tee",
+            "price": "20.00",
+            "quantity": 2
+          }
+        ],
+        "applied_discount": {
+          "description": "Custom discount",
+          "value_type": "fixed_amount",
+          "value": "10.0",
+          "amount": "10.00",
+          "title": "Custom"
+        },
+        "note": "first name: mouad ",
+        "use_customer_default_address": true
+      }
+    },
+     { headers: shopRequestHeaders }
+)
     .then((shopResponse) => {
       
-       console.log(shopResponse.data);
+     console.log(shopResponse.data);
     })
     .catch((error) => {
-        console.log(error);
+        console.log(error.response);
     });
 }

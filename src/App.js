@@ -6,7 +6,7 @@ import Connect from './services/Connect';
 import axios from 'axios';
 
 import queryString from 'query-string';
-import getOrders from './services/Order';
+
 var url = window.location.href;
 var accessToken =url.substring(35);
 console.log("url :"+accessToken);
@@ -20,8 +20,9 @@ export default function App() {
 
 
   const obj = {};
-  // axios.get("api/orders", { headers: RequestHeaders });
-   axios.post("api/orders",obj,{ headers: RequestHeaders });
+  //axios.get("api/orders", { headers: RequestHeaders });
+  axios.get("api/productPage", { headers: RequestHeaders });
+  //axios.post("api/orders",obj,{ headers: RequestHeaders });
 
    const [fields, setFields] = useState([
 

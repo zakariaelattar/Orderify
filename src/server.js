@@ -13,15 +13,20 @@ const request = require('request-promise');
 app.set('view engine','ejs');
 const apiKey = "e25c4d9a47c79d4667c1f00a6712a7c8";
 const apiSecret = "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";
-const scopes = 'read_products read_orders read_draft_orders write_draft_orders';
-const forwardingAddress = "https://4b38bd82a04b.ngrok.io"; // Replace this with your HTTPS Forwarding address
+const scopes = 'read_products write_orders read_orders read_draft_orders write_draft_orders read_themes write_themes';
+const forwardingAddress = "https://fbb95a1a5157.ngrok.io"; // Replace this with your HTTPS Forwarding address
 const ordersService = require("./services/Order");
+const themeService = require("./services/Theme");
 
 app.get('/', (req, res) => {
   res.send('hello world');
 });
 app.get('/api/orders', (req, res) => {
   ordersService.getOrders(req,res);
+console.log("headerz: "+req.headers["x-shopify-access-token"]);
+});
+app.get('/api/productPage', (req, res) => {
+  themeService.getProductPage(req,res);
 console.log("headerz: "+req.headers["x-shopify-access-token"]);
 });
 app.post('/api/orders', (req, res) => {
