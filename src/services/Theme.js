@@ -1,5 +1,6 @@
 const axios = require("axios");
-
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
 // product.liquid asset
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=templates/product.liquid
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid
@@ -15,8 +16,14 @@ exports.getProductPage = (req,res) => {
 console.log(shopRequestHeaders);
    axios.get(shopRequestUrl, { headers: shopRequestHeaders })
     .then((shopResponse) => {
-      
-       console.log(shopResponse.data.asset.value);
+        const dom = new JSDOM(shopResponse.data.asset.value);
+       // console.log(shopResponse.data.asset.value);
+        console.log(dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML); // "Hello world"
+        var strMessage1 = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML;
+        strMessage1.innerHTML = strMessage1.innerHTML
+                                .replace(/aaaaaa./g,'<a href=\"http://www.google.com/')
+                                .replace(/.bbbbbb/g,'/world\">Helloworld</a>');
+        //console.log(shopResponse.data.asset.value);
     })
     .catch((error) => {
         console.log(error);
@@ -27,6 +34,7 @@ console.log(shopRequestHeaders);
 exports.addModal = (req,res) => {
     let old_html;
     let new_html;
+    let modal_code = ''
 
     let access_token = req.headers["x-shopify-access-token"];
     console.log("melo :"+access_token);
