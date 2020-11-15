@@ -14,7 +14,7 @@ app.set('view engine','ejs');
 const apiKey = "e25c4d9a47c79d4667c1f00a6712a7c8";
 const apiSecret = "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";
 const scopes = 'read_products write_orders read_orders read_draft_orders write_draft_orders read_themes write_themes';
-const forwardingAddress = "https://fbb95a1a5157.ngrok.io"; // Replace this with your HTTPS Forwarding address
+const forwardingAddress = "https://bc658e23f2bf.ngrok.io"; // Replace this with your HTTPS Forwarding address
 const ordersService = require("./services/Order");
 const themeService = require("./services/Theme");
 
@@ -63,11 +63,11 @@ app.get('/shopify', (req, res) => {
   //callback route
   app.get('/shopify/callback', (req, res) => {
     const { shop, hmac, code, state } = req.query;
-    console.log(shop);
-    console.log(hmac);
-    console.log(code);
-    console.log(state);
-    console.log(req.headers.cookie);
+    // console.log(shop);
+    // console.log(hmac);
+    // console.log(code);
+    // console.log(state);
+    // console.log(req.headers.cookie);
   /*  const stateCookie = cookie.parse(req.headers.cookie).state;
   
     if (state !== stateCookie) {

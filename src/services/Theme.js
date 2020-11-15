@@ -1,5 +1,6 @@
 const axios = require("axios");
 const jsdom = require("jsdom");
+const fs = require("fs");
 const { JSDOM } = jsdom;
 // product.liquid asset
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=templates/product.liquid
@@ -13,67 +14,75 @@ exports.getProductPage = (req,res) => {
      const shopRequestHeaders = {
       'X-Shopify-Access-Token': access_token,
     };
-console.log(shopRequestHeaders);
+    console.log(shopRequestHeaders);
    axios.get(shopRequestUrl, { headers: shopRequestHeaders })
     .then((shopResponse) => {
+        // console.log("-- dom ------");
+        // console.log(dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML); // "Hello world"        
+        
         const dom = new JSDOM(shopResponse.data.asset.value);
-       // console.log(shopResponse.data.asset.value);
-        console.log(dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML); // "Hello world"
-        var strMessage1 = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML;
-        strMessage1.innerHTML = strMessage1.innerHTML
-                                .replace(/aaaaaa./g,'<a href=\"http://www.google.com/')
-                                .replace(/.bbbbbb/g,'/world\">Helloworld</a>');
+        var wrapper = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0];
+        try {
+            //wrapper.innerHTML='hola';
+            let same = dom.window.document.getElementsByTagName("BODY")[0].innerHTML;
+            fs.writeFile("same.liquid",same,() =>{
+              console.log("yes");
+            });            
+            fs.writeFile("response.liquid",shopResponse.data.asset.value,() =>{
+              console.log("yes");
+            });
+           // this.addModal(,access_token)
+           // console.log("difffffff 2");
+            //console.log(same);
+         
+        }
+        catch(e) {
+            console.log(e);        }
         //console.log(shopResponse.data.asset.value);
     })
     .catch((error) => {
-        console.log(error);
+       // console.log(error);
     });
 
 }
 
-exports.addModal = (req,res) => {
+exports.addModal = (htmlCode,a) => {
     let old_html;
     let new_html;
-    let modal_code = ''
+    let modal_code = '';
 
-    let access_token = req.headers["x-shopify-access-token"];
-    console.log("melo :"+access_token);
+    let access_token = a;
+    // console.log("melo :"+access_token);
+      console.log(htmlCode);
+    //   console.log(
+    //       htmlCode.replace(/"/g, 'd')
 
-    const shopRequestUrl = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid';
+    //       );
+    // console.log("ffff");
+
+    const shopRequestUrl = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json';
      const shopRequestHeaders = {
       'X-Shopify-Access-Token': access_token
     };
 
 
-   axios.post(shopRequestUrl,
+   axios.put(shopRequestUrl,
     {
-      "order": {
-        "line_items": [
-          {
-            "title": "Custom Tee",
-            "price": "20.00",
-            "quantity": 2
-          }
-        ],
-        "applied_discount": {
-          "description": "Custom discount",
-          "value_type": "fixed_amount",
-          "value": "10.0",
-          "amount": "10.00",
-          "title": "Custom"
-        },
-        "note": "first name: mouad ",
-        "use_customer_default_address": true
-      }
-    },
+        "asset": {
+          "key": "sections/product-template.liquid",
+          "value": htmlCode
+        }
+      },
      { headers: shopRequestHeaders }
 )
     .then((shopResponse) => {
       
-     console.log(shopResponse.data);
+     console.log(shopResponse);
     })
     .catch((error) => {
-        console.log(error.response);
+        //console.log(htmlCode);
+        
+     console.log(error.config.data);
     });
 }
 

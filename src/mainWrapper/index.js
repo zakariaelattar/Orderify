@@ -36,8 +36,8 @@ export default class index extends Component {
           {/* adding fields in this section */}
     <Switch>
       <Route path="/ExportOrders" component={() => <ExportOrders  />}  />
-      <Route path="/FormEditor" component={() => <FormEditor fields={this.props.fields} />}  />
-      <Route path="/FormSettings" component={() => <FormSettings  />}  />
+      <Route path="/FormEditor" component={() => <FormEditor fields={this.props.fields} formSettings={this.props.formSettings}  />}  />
+      <Route path="/FormSettings" component={() => <FormSettings formSettings={this.props.formSettings} />}  />
     </Switch>
 
 {/* End add field section */}

@@ -19,9 +19,8 @@ export default class Fields extends Component {
             <input
              type="text" 
             placeholder={this.state.placeholder}
-            {...this.state.required == 1 ? "required" : null}
+            required
             className="form-control"
-
             
              />
             </Fragment>
