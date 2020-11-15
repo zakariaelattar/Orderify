@@ -38,6 +38,7 @@
     "react-scripts": "3.4.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
+    "sequelize": "^6.3.5",
     "shopify-node-api": "^1.11.0"
   },
   "devDependencies": {
