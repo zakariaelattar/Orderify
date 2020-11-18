@@ -15,13 +15,14 @@ exports.getProductPage = (req,res) => {
       'X-Shopify-Access-Token': access_token,
     };
     console.log(shopRequestHeaders);
-   axios.get(shopRequestUrl, { headers: shopRequestHeaders })
-    .then((shopResponse) => {
-        // console.log("-- dom ------");
-        // console.log(dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML); // "Hello world"        
-        
-        const dom = new JSDOM(shopResponse.data.asset.value);
-        var wrapper = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0];
+   axios
+   .get(shopRequestUrl, { headers: shopRequestHeaders })
+   .then((shopResponse) => {
+         console.log("-- dom ------");
+         
+         const dom = new JSDOM(shopResponse.data.asset.value);
+         console.log(dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML); // "Hello world"        
+         var wrapper = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0];
         try {
             //wrapper.innerHTML='hola';
             let same = dom.window.document.getElementsByTagName("BODY")[0].innerHTML;
@@ -45,7 +46,11 @@ exports.getProductPage = (req,res) => {
     });
 
 }
-
+exports.saveForm = (htmlCode) => {
+  
+console.log(htmlCode);
+// process to save it in database 
+}
 exports.addModal = (htmlCode,a) => {
     let old_html;
     let new_html;
@@ -85,6 +90,7 @@ exports.addModal = (htmlCode,a) => {
      console.log(error.config.data);
     });
 }
+
 
 /**
  * 
