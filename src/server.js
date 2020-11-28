@@ -14,16 +14,27 @@ app.set('view engine','ejs');
 const apiKey = "e25c4d9a47c79d4667c1f00a6712a7c8";
 const apiSecret = "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";
 const scopes = 'read_products write_orders read_orders read_draft_orders write_draft_orders read_themes write_themes';
-const forwardingAddress = "https://bc658e23f2bf.ngrok.io"; // Replace this with your HTTPS Forwarding address
+const forwardingAddress = "https://e12117becf1f.ngrok.io"; // Replace this with your HTTPS Forwarding address
 const ordersService = require("./services/Order");
 const themeService = require("./services/Theme");
 
+//  db.sequelize.sync({force: false})
+//  .then(() => {
+//    console.log('Drop and Resync Db');
+//   // initial();
+//  })
+//  .catch((err) =>{
+//    console.log(err)
+//  });
 app.get('/', (req, res) => {
   res.send('hello world');
 });
 app.get('/api/orders', (req, res) => {
   ordersService.getOrders(req,res);
 console.log("headerz: "+req.headers["x-shopify-access-token"]);
+});
+app.get('/api/addModal', (form) => {
+  themeService.saveForm(form);
 });
 app.get('/api/productPage', (req, res) => {
   themeService.getProductPage(req,res);

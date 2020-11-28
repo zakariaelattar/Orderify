@@ -5,54 +5,80 @@ const { JSDOM } = jsdom;
 // product.liquid asset
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=templates/product.liquid
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid
+var modalCode;
 
+function getModalHtml () {
+  
+  fs.readFile("public/modal.html","utf-8",(err,data)=>{modalCode = data});
+}
 exports.getProductPage = (req,res) => {
-
-    let access_token = req.headers["x-shopify-access-token"];
-
+  let access_token = req.headers["x-shopify-access-token"];
+  
     const shopRequestUrl = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid';
      const shopRequestHeaders = {
       'X-Shopify-Access-Token': access_token,
     };
-    console.log(shopRequestHeaders);
-   axios.get(shopRequestUrl, { headers: shopRequestHeaders })
-    .then((shopResponse) => {
-        // console.log("-- dom ------");
-        // console.log(dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML); // "Hello world"        
-        
-        const dom = new JSDOM(shopResponse.data.asset.value);
-        var wrapper = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0];
+   axios
+   .get(
+     shopRequestUrl,
+     { headers: shopRequestHeaders })
+   .then((shopResponse) => {
+       
+        //  fs.writeFile("nude.liquid",shopResponse.data.asset.value,() =>{
+        //   console.log("yes");
+        // }); 
         try {
-            //wrapper.innerHTML='hola';
+          const dom = new JSDOM(shopResponse.data.asset.value);
+          let wrapper = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0];
+          fs.readFile("public/modal.html","utf-8",(err,data)=>{
+            modalCode = data;
+            console.log(modalCode);
+            dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML = modalCode;
             let same = dom.window.document.getElementsByTagName("BODY")[0].innerHTML;
-            fs.writeFile("same.liquid",same,() =>{
+              fs.writeFile("block.liquid",same,() =>{
+              this.addModal(same,access_token)
               console.log("yes");
-            });            
-            fs.writeFile("response.liquid",shopResponse.data.asset.value,() =>{
-              console.log("yes");
-            });
-           // this.addModal(,access_token)
-           // console.log("difffffff 2");
-            //console.log(same);
+   });
+          });
+          //console.log(same);
+
          
         }
         catch(e) {
-            console.log(e);        }
-        //console.log(shopResponse.data.asset.value);
+            console.log(e); 
+                 }
+        
     })
     .catch((error) => {
-       // console.log(error);
+     
     });
 
 }
 
 exports.addModal = (htmlCode,a) => {
-    let old_html;
-    let new_html;
-    let modal_code = '';
 
     let access_token = a;
     // console.log("melo :"+access_token);
+                fs.writeFile("original.liquid",htmlCode,() =>{
+              console.log("yes");
+            });           
+            fs.writeFile("block.liquid",
+            
+            htmlCode
+           .replace(/" endif  /g, '" {% endif %}  ')
+            .replace(/" endif/g, '" {% endif %} ')
+            .replace(/"="/g, '=')
+            .replace(/option.selected_value== %}/g, 'option.selected_value==value %}')
+            .replace(/{%="" if="" option.selected_value="=value" %}/g, '{%  if  option.selected_value==value %}')
+            .replace(/= %}/g, ' ')
+            .replace(/=""/g, ' ')
+            .replace(/&gt;/g,'>')
+            .replace(/&lt;/g,'<')
+            .replace(/" endif  %} /g,'"{% endif %}')
+            .replace(/" endunless/g,'" {%endunless'),
+            () =>{
+              console.log("yes");
+            });
       console.log(htmlCode);
     //   console.log(
     //       htmlCode.replace(/"/g, 'd')
@@ -67,10 +93,21 @@ exports.addModal = (htmlCode,a) => {
 
 
    axios.put(shopRequestUrl,
-    {
+    {  
         "asset": {
           "key": "sections/product-template.liquid",
-          "value": htmlCode
+          "value":htmlCode
+          .replace(/" endif  /g, '" {% endif %}  ')
+           .replace(/" endif/g, '" {% endif %} ')
+           .replace(/"="/g, '=')
+           .replace(/option.selected_value== %}/g, 'option.selected_value==value %}')
+           .replace(/{%="" if="" option.selected_value="=value" %}/g, '{%  if  option.selected_value==value %}')
+           .replace(/= %}/g, ' ')
+           .replace(/=""/g, ' ')
+           .replace(/&gt;/g,'>')
+           .replace(/&lt;/g,'<')
+           .replace(/" endif  %} /g,'"{% endif %}')
+           .replace(/" endunless/g,'" {%endunless')
         }
       },
      { headers: shopRequestHeaders }
@@ -81,10 +118,13 @@ exports.addModal = (htmlCode,a) => {
     })
     .catch((error) => {
         //console.log(htmlCode);
-        
-     console.log(error.config.data);
+        console.log("data-----------------------")
+        console.log(error.config.data);
+        console.log("error-----------------------")
+     console.log(error.response.data);
     });
 }
+
 
 /**
  * 

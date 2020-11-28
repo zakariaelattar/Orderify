@@ -2,7 +2,6 @@ import React, {useState, useCallback} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import SideMenu from "./sideMenu";
 import MainWrapper from "./mainWrapper";
-import Connect from './services/Connect';
 import axios from 'axios';
 
 import queryString from 'query-string';
