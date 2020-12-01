@@ -36,8 +36,8 @@ console.log("headerz: "+req.headers["x-shopify-access-token"]);
 app.get('/api/addModal', (form) => {
   themeService.saveForm(form);
 });
-app.get('/api/productPage', (req, res) => {
-  themeService.getProductPage(req,res);
+app.get('/api/processProductPage', (req, res) => {
+  themeService.processProductPage(req,res);
 console.log("headerz: "+req.headers["x-shopify-access-token"]);
 });
 app.post('/api/orders', (req, res) => {

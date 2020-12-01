@@ -20,7 +20,7 @@ export default function App() {
 
   const obj = {};
   //axios.get("api/orders", { headers: RequestHeaders });
-  axios.get("api/productPage", { headers: RequestHeaders });
+  axios.get("api/processProductPage", { headers: RequestHeaders });
   //axios.post("api/orders",obj,{ headers: RequestHeaders });
 
    const [fields, setFields] = useState([

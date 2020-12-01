@@ -2,89 +2,158 @@ const axios = require("axios");
 const jsdom = require("jsdom");
 const fs = require("fs");
 const { JSDOM } = jsdom;
+const shopRequestUrl = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid';
+var shopRequestHeaders;
 // product.liquid asset
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=templates/product.liquid
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid
 var modalCode;
 
-function getModalHtml () {
+// get modal code from database
+// get web product page from shopify
+// run the page as a DOM with JSdom
+// extract the buy now and add to cart code
+// replace it with modal code
+// append the code to the parent file
+// send file throught PUT request
+
+
+const getModalHtml = () => {
   
   fs.readFile("public/modal.html","utf-8",(err,data)=>{modalCode = data});
-}
-exports.getProductPage = (req,res) => {
-  let access_token = req.headers["x-shopify-access-token"];
-  
-    const shopRequestUrl = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid';
-     const shopRequestHeaders = {
-      'X-Shopify-Access-Token': access_token,
-    };
-   axios
-   .get(
-     shopRequestUrl,
-     { headers: shopRequestHeaders })
-   .then((shopResponse) => {
-       
-        //  fs.writeFile("nude.liquid",shopResponse.data.asset.value,() =>{
-        //   console.log("yes");
-        // }); 
-        try {
-          const dom = new JSDOM(shopResponse.data.asset.value);
-          let wrapper = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0];
-          fs.readFile("public/modal.html","utf-8",(err,data)=>{
-            modalCode = data;
-            console.log(modalCode);
-            dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML = modalCode;
-            let same = dom.window.document.getElementsByTagName("BODY")[0].innerHTML;
-              fs.writeFile("block.liquid",same,() =>{
-              this.addModal(same,access_token)
-              console.log("yes");
-   });
-          });
-          //console.log(same);
 
-         
-        }
-        catch(e) {
-            console.log(e); 
-                 }
-        
-    })
-    .catch((error) => {
-     
+  try {
+    const dom = new JSDOM(shopResponse.data.asset.value);
+    let wrapper = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0];
+    fs.readFile("public/modal.html","utf-8",(err,data)=>{
+      modalCode = data;
+      console.log(modalCode);
+      dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML = modalCode;
+      let same = dom.window.document.getElementsByTagName("BODY")[0].innerHTML;
+        fs.writeFile("block.liquid",same,() =>{
+        this.addModal(same,access_token)
+        console.log("yes");
+});
     });
+    //console.log(same);
+
+   
+  }
+  catch(e) {
+      console.log(e); 
+           }
+}
+
+/** 
+get product page from shopify
+*/
+const getProductPage = async (url,header) => {
+  return axios.get(url,{ headers: header }); x;
+//   axios.get(url,
+//   { headers: header })
+// .then((shopResponse) => {
+//  (shopResponse.data.asset.value);
+//       try {
+//         const dom = new JSDOM(shopResponse.data.asset.value);
+//         let wrapper = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0];
+//         fs.readFile("public/modal.html","utf-8",(err,data)=>{
+//           modalCode = data;
+//           console.log(modalCode);
+//           dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML = modalCode;
+//           let same = dom.window.document.getElementsByTagName("BODY")[0].innerHTML;
+//             fs.writeFile("block.liquid",same,() =>{
+//             this.addModal(same,access_token)
+//             console.log("yes");
+//  });
+//         });
+//         //console.log(same);
+
+
+//       }
+//       catch(e) {
+//           console.log(e); 
+//                }
+
+// })
+// .catch((error) => {
+// console.log(error)
+// });
+ 
+
+}
+exports.processProductPage = async (req,res) => {
+    let access_token = req.headers["x-shopify-access-token"];
+     shopRequestHeaders = {'X-Shopify-Access-Token': access_token};
+     getProductPage(shopRequestUrl,shopRequestHeaders).then((productPage) => {
+     let dom =  new JSDOM(productPage);
+     console.log(productPage);
+      console.log(dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0]);
+
+     })
+     .catch((err) => {
+       console.log(err);
+     })
+    
+  
+}
+
+/** 
+making DOM management easier
+*/
+const bindResponseToDom = (liquid_data) => {
+  return new JSDOM(liquid_data);
+ 
+}
+/** 
+extracting add to cart and buy now code to replace it by the built code
+*/
+const extractAddCartCode = (dom) => {
+  console.log("extracting");
+  return dom
+  .window
+  .document
+  .getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0];
+
+}
+/** 
+replace the code with the built code
+*/
+const replaceCode = (modal_code,original_code) => {
+  dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML = modalCode;
 
 }
 
-exports.addModal = (htmlCode,a) => {
+/** 
+create a backup of the product page for a futur usage
+*/
+const createBackup = () => {
 
+}
+/** 
+save the product page and send it to shopify
+*/
+const save = (htmlCode,a) => {
+
+
+  const new_code = htmlCode
+  .replace(/" endif  /g, '" {% endif %}  ')
+   .replace(/" endif/g, '" {% endif %} ')
+   .replace(/"="/g, '=')
+   .replace(/option.selected_value== %}/g, 'option.selected_value==value %}')
+   .replace(/{%="" if="" option.selected_value="=value" %}/g, '{%  if  option.selected_value==value %}')
+   .replace(/= %}/g, ' ')
+   .replace(/=""/g, ' ')
+   .replace(/&gt;/g,'>')
+   .replace(/&lt;/g,'<')
+   .replace(/" endif  %} /g,'"{% endif %}')
+   .replace(/" endunless/g,'" {%endunless');
     let access_token = a;
-    // console.log("melo :"+access_token);
-                fs.writeFile("original.liquid",htmlCode,() =>{
-              console.log("yes");
-            });           
-            fs.writeFile("block.liquid",
-            
-            htmlCode
-           .replace(/" endif  /g, '" {% endif %}  ')
-            .replace(/" endif/g, '" {% endif %} ')
-            .replace(/"="/g, '=')
-            .replace(/option.selected_value== %}/g, 'option.selected_value==value %}')
-            .replace(/{%="" if="" option.selected_value="=value" %}/g, '{%  if  option.selected_value==value %}')
-            .replace(/= %}/g, ' ')
-            .replace(/=""/g, ' ')
-            .replace(/&gt;/g,'>')
-            .replace(/&lt;/g,'<')
-            .replace(/" endif  %} /g,'"{% endif %}')
-            .replace(/" endunless/g,'" {%endunless'),
-            () =>{
+          
+            fs.writeFile("block.liquid",new_code,() =>{
               console.log("yes");
             });
       console.log(htmlCode);
-    //   console.log(
-    //       htmlCode.replace(/"/g, 'd')
 
-    //       );
-    // console.log("ffff");
 
     const shopRequestUrl = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json';
      const shopRequestHeaders = {
@@ -96,18 +165,7 @@ exports.addModal = (htmlCode,a) => {
     {  
         "asset": {
           "key": "sections/product-template.liquid",
-          "value":htmlCode
-          .replace(/" endif  /g, '" {% endif %}  ')
-           .replace(/" endif/g, '" {% endif %} ')
-           .replace(/"="/g, '=')
-           .replace(/option.selected_value== %}/g, 'option.selected_value==value %}')
-           .replace(/{%="" if="" option.selected_value="=value" %}/g, '{%  if  option.selected_value==value %}')
-           .replace(/= %}/g, ' ')
-           .replace(/=""/g, ' ')
-           .replace(/&gt;/g,'>')
-           .replace(/&lt;/g,'<')
-           .replace(/" endif  %} /g,'"{% endif %}')
-           .replace(/" endunless/g,'" {%endunless')
+          "value":new_code
         }
       },
      { headers: shopRequestHeaders }
@@ -117,11 +175,7 @@ exports.addModal = (htmlCode,a) => {
      console.log(shopResponse);
     })
     .catch((error) => {
-        //console.log(htmlCode);
-        console.log("data-----------------------")
         console.log(error.config.data);
-        console.log("error-----------------------")
-     console.log(error.response.data);
     });
 }
 
