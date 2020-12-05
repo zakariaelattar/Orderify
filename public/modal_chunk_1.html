@@ -38,6 +38,7 @@
                   {% else %}
                     {{ 'products.product.add_to_cart' | t }}
                   {% endunless %}
+                  hello
                 </span>
         </button>
         {% if section.settings.enable_payment_button %}
@@ -128,24 +129,8 @@
           </div>
         {% endif %}
       </div>
-      <h2>Informations</h2>
-      <label>First name</label>
-      <input type="text" class="form-control" />
-            <label>Last name</label>
-      <input type="text" class="form-control" />
-            <label>Country</label>
-      <input type="text" class="form-control" />
-            <label>email</label>
-      <input type="text" class="form-control" />
-      <button class="btn btn-success">submit</button>
 
-    </div>
-  </div>
-</div>
-         <script>
-        document.getElementById('showModal').addEventListener('click',()=>{document.getElementById("modal").style.display="block";   })
-        document.getElementById('x').addEventListener('click',()=>{document.getElementById("modal").style.display="none";  })
-         </script>
+
          
     
              

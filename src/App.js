@@ -3,26 +3,25 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import SideMenu from "./sideMenu";
 import MainWrapper from "./mainWrapper";
 import axios from 'axios';
-
 import queryString from 'query-string';
+
+import {reactLocalStorage} from 'reactjs-localstorage';
 
 var url = window.location.href;
 var accessToken =url.substring(35);
-console.log("url :"+accessToken);
 export default function App() {
-  console.log("url :"+accessToken);
 
   // new Connect();
   const RequestHeaders = {
     'X-Shopify-Access-Token': accessToken
   };
 
-
+  reactLocalStorage.setObject('RequestHeaders', RequestHeaders);
   const obj = {};
   //axios.get("api/orders", { headers: RequestHeaders });
-  axios.get("api/processProductPage", { headers: RequestHeaders });
+ //axios.get("api/processProductPage", { headers: RequestHeaders });
   //axios.post("api/orders",obj,{ headers: RequestHeaders });
-
+  
    const [fields, setFields] = useState([
 
     {
@@ -61,7 +60,7 @@ export default function App() {
 
     <div className="container">
         <div className="row mt-5">
-            <MainWrapper fields={fields} formSettings={formSettings} setFields={setFields} />
+            <MainWrapper requestHeaders={RequestHeaders} fields={fields} formSettings={formSettings} setFields={setFields} />
               <SideMenu fields={fields} setFields={setFields} formSettings={formSettings} addField={addField} />
 
 

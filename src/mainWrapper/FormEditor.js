@@ -3,11 +3,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import fs from 'fs';
 import Fields from './fields';
 import axios from 'axios';
+import {reactLocalStorage} from 'reactjs-localstorage';
+import queryString from 'query-string';
+const RequestHeaders = reactLocalStorage.getObject('RequestHeaders');
+
 
 class FormEditor extends Component {
     constructor(props) {
         super(props);
         this.state={
+            requestHeaders: this.props.requestHeaders,
             fields: this.props.fields,
             formSettings: this.props.formSettings
         }
@@ -21,21 +26,25 @@ class FormEditor extends Component {
     componentDidUpdate() {
         this.state.fields = this.props.fields;
         console.log(this.props.fields);
+        console.log("updated");
 
     }
     addField() {
         console.log(this.props.field_to_add);
     }
-    saveForm() {
+    exportForm() {
        console.log("saving ..."); 
-       axios.post('api/addModal',document.getElementById("form").innerHTML);
+       let page = document.getElementById("form").innerHTML;
+       console.log(page);
+       axios.post("api/exportModal", {formHTML:page},RequestHeaders);
 
 
     }
     render() {
         return (
             <div className="form-group">
-                        <button className="btn btn-primary mt-5 form-control mb-5 disabled" onClick={this.saveForm}>Export to the shop</button>
+            <p>You may add, edit, drag'n'drop and remove fields on this page</p>
+                        <button className="btn btn-primary mt-5 form-control mb-5 disabled" onClick={this.exportForm}>Export to the shop</button>
                         <a className="btn btn-warning" href="mystoreofdev.shopify.com">Visualize</a>
              <p>Here's how your order form will look like</p>
               <hr/>

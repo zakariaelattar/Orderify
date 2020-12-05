@@ -38,6 +38,7 @@
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
+    "reactjs-localstorage": "^1.0.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "sequelize": "^6.3.5",

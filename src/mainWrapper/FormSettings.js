@@ -60,7 +60,7 @@ constructor(props) {
         return (
             <div className="form-group"> 
            
-             <p className="text-muted">You may add, edit, drag'n'drop and remove fields on this page</p>
+             <p className="text-muted">You can set different values of your form to look as you want.</p>
            <hr/>
            {/* Form placement */}
            <div>

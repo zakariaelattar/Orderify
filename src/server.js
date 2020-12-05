@@ -9,12 +9,12 @@ const cookie = require('cookie');
 const nonce = require('nonce')();
 const querystring = require('querystring');
 const request = require('request-promise');
-
+const db = require("./models/index");
 app.set('view engine','ejs');
 const apiKey = "e25c4d9a47c79d4667c1f00a6712a7c8";
 const apiSecret = "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";
 const scopes = 'read_products write_orders read_orders read_draft_orders write_draft_orders read_themes write_themes';
-const forwardingAddress = "https://e12117becf1f.ngrok.io"; // Replace this with your HTTPS Forwarding address
+const forwardingAddress = "https://0edc10beeb69.ngrok.io"; // Replace this with your HTTPS Forwarding address
 const ordersService = require("./services/Order");
 const themeService = require("./services/Theme");
 
@@ -26,23 +26,23 @@ const themeService = require("./services/Theme");
 //  .catch((err) =>{
 //    console.log(err)
 //  });
+// parse application/json
+app.use(express.json());
 app.get('/', (req, res) => {
   res.send('hello world');
 });
 app.get('/api/orders', (req, res) => {
   ordersService.getOrders(req,res);
-console.log("headerz: "+req.headers["x-shopify-access-token"]);
 });
-app.get('/api/addModal', (form) => {
+app.get('/api/addModal', (req,res) => {
   themeService.saveForm(form);
 });
-app.get('/api/processProductPage', (req, res) => {
-  themeService.processProductPage(req,res);
-console.log("headerz: "+req.headers["x-shopify-access-token"]);
+app.post('/api/exportModal', (req, res) => {
+
+ themeService.exportModal(req,res);
 });
 app.post('/api/orders', (req, res) => {
   ordersService.addOrder(req,res);
-  console.log("header2: "+req.headers["x-shopify-access-token"]);
 
 
  
@@ -74,44 +74,8 @@ app.get('/shopify', (req, res) => {
   //callback route
   app.get('/shopify/callback', (req, res) => {
     const { shop, hmac, code, state } = req.query;
-    // console.log(shop);
-    // console.log(hmac);
-    // console.log(code);
-    // console.log(state);
-    // console.log(req.headers.cookie);
-  /*  const stateCookie = cookie.parse(req.headers.cookie).state;
-  
-    if (state !== stateCookie) {
-      return res.status(403).send('Request origin cannot be verified');
-    }*/
-  
+
     if (shop && hmac && code) {
-      // DONE: Validate request is from Shopify
-    //   const map = Object.assign({}, req.query);
-    //   delete map['signature'];
-    //   delete map['hmac'];
-    //   const message = querystring.stringify(map);
-    //   const providedHmac = Buffer.from(hmac, 'utf-8');
-    //   const generatedHash = Buffer.from(
-    //     crypto
-    //       .createHmac('sha256', apiSecret)
-    //       .update(message)
-    //       .digest('hex'),
-    //       'utf-8'
-    //     );
-    //   let hashEquals = false;
-  
-    //   try {
-    //     hashEquals = crypto.timingSafeEqual(generatedHash, providedHmac)
-    //   } catch (e) {
-    //     hashEquals = false;
-    //   };
-  
-    //   if (!hashEquals) {
-    //     return res.status(400).send('HMAC validation failed');
-    //   }
-  
-      // DONE: Exchange temporary code for a permanent access token
       const accessTokenRequestUrl = 'https://' + shop + '/admin/oauth/access_token';
       const accessTokenPayload = {
         client_id: apiKey,
@@ -123,23 +87,6 @@ app.get('/shopify', (req, res) => {
       .then((accessTokenResponse) => {
         const accessToken = accessTokenResponse.access_token;
         res.redirect("http://localhost:3000/access_token="+accessToken);
-
-        //console.log(accessToken);
-      
-        // DONE: Use access token to make API call to 'shop' endpoint
-        // const shopRequestUrl = 'https://' + shop + '/admin/api/2019-07/shop.json';
-        //  shopRequestHeaders = {
-        //   'X-Shopify-Access-Token': accessToken,
-        // };
-  
-       // request.get(shopRequestUrl, { headers: shopRequestHeaders })
-        // .then((shopResponse) => {
-          
-        //    res.status(200).end(shopResponse);
-        // })
-        // .catch((error) => {
-        //   res.status(error.statusCode).send(error.error.error_description);
-        // });
       })
       // .catch((error) => {
       //   res.status(error.statusCode).send(error.error.error_description);

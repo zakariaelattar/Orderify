@@ -1,30 +1,37 @@
-// const config = require("../config/db.config.js");
+const config = require("../config/db.config.js");
 
-// const Sequelize = require("sequelize");
-// const sequelize = new Sequelize(
-//   config.DB,  
-//   config.USER,
-//   config.PASSWORD,
-//   {
-//     host: config.HOST,
-//     dialect: config.dialect,
-//     operatorsAliases: false,
+const Sequelize = require("sequelize");
+const sequelize = new Sequelize(
+  config.DB,  
+  config.USER,
+  config.PASSWORD,
+  {
+    host: config.HOST,
+    dialect: config.dialect,
+    operatorsAliases: false,
 
-//     pool: {
-//       max: config.pool.max,
-//       min: config.pool.min,
-//       acquire: config.pool.acquire,
-//       idle: config.pool.idle
-//     }
-//   }
-// );
+    pool: {
+      max: config.pool.max,
+      min: config.pool.min,
+      acquire: config.pool.acquire,
+      idle: config.pool.idle
+    }
+  }
+);
 
-// const db = {};
+const db = {};
 
-// db.Sequelize = Sequelize;
-// db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-// db.user = require("./user.model.js")(sequelize, Sequelize);
+db.user = require("./user.model.js")(sequelize,Sequelize);
+db.shop = require("./shop.model.js")(sequelize,Sequelize);
+db.form = require("./form.model.js")(sequelize,Sequelize);
+
+
+db.shop.hasMany(db.form);
+db.form.belongsTo(db.shop);
+
 // // db.role = require("./role.model")(sequelize, Sequelize);
 // // db.template = require("./template.model")(sequelize,Sequelize);
 // // db.category_template = require("./category_template.model")(sequelize,Sequelize);
@@ -64,8 +71,7 @@
 // // db.user.hasMany(db.c_history);
 // // db.c_history.belongsTo(db.user);
 
-// // db.category_template.hasMany(db.template);
-// // db.template.belongsTo(db.category_template);
+
 // // // Subscription
 // // db.pack.hasMany(db.subscription);
 // // db.subscription.belongsTo(db.pack);
@@ -79,6 +85,6 @@
 // // db.user.hasMany(db.project);
 // // db.project.belongsTo(db.user);
 
-// // db.ROLES = ["user", "admin", "moderator"];
+ //db.ROLES = ["user", "admin", "moderator"];
 
-// module.exports = db;
+ module.exports = db;

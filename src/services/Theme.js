@@ -1,15 +1,17 @@
 const axios = require("axios");
 const jsdom = require("jsdom");
+const db = require("../models");
 const fs = require("fs");
 const { getArgumentValues } = require("graphql/execution/values");
 const { JSDOM } = jsdom;
 const GET_ASSET_ENDPOINT = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid';
 const PUT_ASSET_ENDPOINT = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json';
-
+const form = db.form;
 var shopRequestHeaders;
 // product.liquid asset
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=templates/product.liquid
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid
+
 var MODAL_CODE;
 
 // get modal code from database
@@ -21,30 +23,28 @@ var MODAL_CODE;
 // send file throught PUT request
 
 
-const getModalHtml = () => {
-  
-  fs.readFile("public/modal.html","utf-8",(err,data)=>{ MODAL_CODE =  data});
+const mergeFormModal = (formHTML) => {
+  let MODAL_CODE_CHUNK_1;
+  let MODAL_CODE_CHUNK_2;
 
-//   try {
-//     const dom = new JSDOM(shopResponse.data.asset.value);
-//     let wrapper = dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0];
-//     fs.readFile("public/modal.html","utf-8",(err,data)=>{
-//       modalCode = data;
-//       console.log(modalCode);
-//       dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML = modalCode;
-//       let same = dom.window.document.getElementsByTagName("BODY")[0].innerHTML;
-//         fs.writeFile("block.liquid",same,() =>{
-//         this.addModal(same,access_token)
-//         console.log("yes");
-// });
-//     });
-//     //console.log(same);
+  fs.readFile("public/modal_chunk_1.html","utf-8",(err,data)=>{ MODAL_CODE_CHUNK_1 =  data});
+  fs.readFile("public/modal_chunk_2.html","utf-8",(err,data)=>{ MODAL_CODE_CHUNK_2 =  data});
 
-   
-//   }
-//   catch(e) {
-//       console.log(e); 
-//            }
+  MODAL_CODE =  MODAL_CODE_CHUNK_1+formHTML+MODAL_CODE_CHUNK_2;
+}
+const saveModalInDatabase = (formHTML) => {
+
+  form.create({
+    active:false,
+    htmlCode:MODAL_CODE,
+    shopId:1
+  })
+  .then(() => {
+    console.log("generated code in database");
+  })
+  .catch((err) => {
+    console.log("some error occured");
+  })
 }
 
 /** 
@@ -67,13 +67,16 @@ const putProductPage = async (url,header,page_code) => {
 );
 
 }
-exports.processProductPage = async (req,res) => {
+exports.exportModal = async (req,res) => {
+
         let access_token = req.headers["x-shopify-access-token"];
         shopRequestHeaders = {'X-Shopify-Access-Token': access_token};
-        getModalHtml();
+        saveModalInDatabase(req.body.formHTML);
         getProductPage(GET_ASSET_ENDPOINT,shopRequestHeaders)
                 .then((shopify_response) => {
+
               string_product_page = shopify_response.data.asset.value
+             
               let dom_product_page =   bindResponseToDom(string_product_page);
               let block = extractAddCartCode(dom_product_page);
               block.innerHTML = MODAL_CODE;
@@ -150,7 +153,8 @@ const save = async (htmlCode,accessToken) => {
   let access_token = accessToken;
   putProductPage(PUT_ASSET_ENDPOINT,
      { headers: shopRequestHeaders },
-      htmlCode) .then((response) => {
+      htmlCode) 
+      .then((response) => {
         console.log("content added successfully !!")    
         console.log(response);
       })
@@ -164,10 +168,3 @@ const save = async (htmlCode,accessToken) => {
   //     });
 }
 
-
-/**
- * 
- * {% comment %}\n  The contents of the product.liquid template can be found in /sections/product-template.liquid\n{% endcomment %}\n\n{% section 'product-template' %}\n\n<script>\n  // Override default values of shop.strings for each template.\n  // Alternate product templates can change values of\n  // add to cart button, sold out, and unavailable states here.\n  theme.productStrings = {\n    addToCart: {{ 'products.product.add_to_cart' | t | json }},\n    soldOut: {{ 'products.product.sold_out' | t | json }},\n    unavailable: {{ 'products.product.unavailable' | t | json }}\n  }\n</script>\n\n{% assign current_variant = product.selected_or_first_available_variant %}\n\n<script type=\"application/ld+json\">\n{\n  \"@context\": \"http://schema.org/\",\n  \"@type\": \"Product\",\n  \"name\": {{ product.title | json }},\n  \"url\": {{ shop.url | append: product.url | json }},\n  {%- if product.featured_media -%}\n    {%- assign media_size = product.featured_media.preview_image.width | append: 'x' -%}\n    \"media\": [\n      {{ product.featured_media | img_url: media_size | prepend: \"https:\" | json }}\n    ],\n  {%- endif -%}\n  \"description\": {{ product.description | strip_html | json }},\n  {%- if current_variant.sku != blank -%}\n    \"sku\": {{ current_variant.sku | json }},\n  {%- endif -%}\n  \"brand\": {\n    \"@type\": \"Thing\",\n    \"name\": {{ product.vendor | json }}\n  },\n  \"offers\": [\n    {%- for variant in product.variants -%}\n      {\n        \"@type\" : \"Offer\",\n        {%- if variant.sku != blank -%}\n          \"sku\": {{ variant.sku | json }},\n        {%- endif -%}\n        \"availability\" : \"http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}\",\n        \"price\" : {{ variant.price | divided_by: 100.00 | json }},\n        \"priceCurrency\" : {{ cart.currency.iso_code | json }},\n        \"url\" : {{ shop.url | append: variant.url | json }}\n      }{% unless forloop.last %},{% endunless %}\n    {%- endfor -%}\n  ]\n}\n</script>\n
- * 
- * 
- */
