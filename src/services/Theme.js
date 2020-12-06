@@ -8,6 +8,8 @@ const GET_ASSET_ENDPOINT = 'https://mystoreofdev.myshopify.com/admin/api/2020-10
 const PUT_ASSET_ENDPOINT = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json';
 const form = db.form;
 var shopRequestHeaders;
+var ressourceUtils = require('../utils/resources.utils');
+
 // product.liquid asset
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=templates/product.liquid
 //https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid
@@ -24,19 +26,23 @@ var MODAL_CODE;
 
 
 const mergeFormModal = (formHTML) => {
-  let MODAL_CODE_CHUNK_1;
-  let MODAL_CODE_CHUNK_2;
-
-  fs.readFile("public/modal_chunk_1.html","utf-8",(err,data)=>{ MODAL_CODE_CHUNK_1 =  data});
-  fs.readFile("public/modal_chunk_2.html","utf-8",(err,data)=>{ MODAL_CODE_CHUNK_2 =  data});
-
+  let MODAL_CODE_CHUNK_1 = fs.readFileSync("public/modal_chunk_1.html","utf-8");
+  let MODAL_CODE_CHUNK_2 = fs.readFileSync("public/modal_chunk_2.html","utf-8");
   MODAL_CODE =  MODAL_CODE_CHUNK_1+formHTML+MODAL_CODE_CHUNK_2;
 }
-const saveModalInDatabase = (formHTML) => {
-
+// const getModalFormDB =  async() => {
+//   x= await form.findAll();
+//   console.log(convertBlobToString(x[0].dataValues.htmlCode));
+// }
+exports.saveModalInDatabase = (formHTML) => {
+  mergeFormModal(formHTML);
   form.create({
-    active:false,
+    id:null,
+    active:0,
     htmlCode:MODAL_CODE,
+    innerCode:formHTML,
+    createdAt:null,
+    updatedAt:null,
     shopId:1
   })
   .then(() => {
@@ -45,6 +51,31 @@ const saveModalInDatabase = (formHTML) => {
   .catch((err) => {
     console.log("some error occured");
   })
+}
+exports.saveSettingsInDatabase = (settings) => {
+    form.findOne(
+      {
+        where:
+        {
+          shopId:'1'
+      }
+    }
+    )
+  .then((data)=> {
+    data.update({
+        settings:settings
+    }).then(() => {
+      console.log("updated settings");
+    })
+    .catch((err) => {
+      console.log("some error occured");
+    })
+
+  })
+  .catch((err) => {
+    console.log("error while searching for appropriate shop");
+  })
+ 
 }
 
 /** 
@@ -72,12 +103,13 @@ exports.exportModal = async (req,res) => {
         let access_token = req.headers["x-shopify-access-token"];
         shopRequestHeaders = {'X-Shopify-Access-Token': access_token};
         saveModalInDatabase(req.body.formHTML);
+       // getModalFormDB();
         getProductPage(GET_ASSET_ENDPOINT,shopRequestHeaders)
                 .then((shopify_response) => {
 
               string_product_page = shopify_response.data.asset.value
              
-              let dom_product_page =   bindResponseToDom(string_product_page);
+              let dom_product_page =  bindResponseToDom(string_product_page);
               let block = extractAddCartCode(dom_product_page);
               block.innerHTML = MODAL_CODE;
 

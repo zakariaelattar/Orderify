@@ -16,7 +16,9 @@ export default function App() {
     'X-Shopify-Access-Token': accessToken
   };
 
+  if(RequestHeaders["X-Shopify-Access-Token"] != "")
   reactLocalStorage.setObject('RequestHeaders', RequestHeaders);
+ 
   const obj = {};
   //axios.get("api/orders", { headers: RequestHeaders });
  //axios.get("api/processProductPage", { headers: RequestHeaders });

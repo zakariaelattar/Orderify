@@ -3,16 +3,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import fs from 'fs';
 import Fields from './fields';
 import axios from 'axios';
-import {reactLocalStorage} from 'reactjs-localstorage';
 import queryString from 'query-string';
+import {reactLocalStorage} from 'reactjs-localstorage';
 const RequestHeaders = reactLocalStorage.getObject('RequestHeaders');
-
 
 class FormEditor extends Component {
     constructor(props) {
         super(props);
         this.state={
-            requestHeaders: this.props.requestHeaders,
             fields: this.props.fields,
             formSettings: this.props.formSettings
         }
@@ -32,11 +30,31 @@ class FormEditor extends Component {
     addField() {
         console.log(this.props.field_to_add);
     }
+    saveForm() {
+        console.log("saving ..."); 
+        let page = document.getElementById("form").innerHTML;
+        axios({
+            method:'post',
+            url:'api/saveModal',
+            data:{formHTML:page},
+            headers: RequestHeaders
+        });
+    }
     exportForm() {
-       console.log("saving ..."); 
+        console.log("exporting ..."); 
+
        let page = document.getElementById("form").innerHTML;
        console.log(page);
-       axios.post("api/exportModal", {formHTML:page},RequestHeaders);
+       axios({
+           method:'post',
+           url:'api/exportModal',
+           data:{formHTML:page},
+           headers: RequestHeaders
+       });
+    //    axios.post("api/exportModal",
+    //     RequestHeaders,
+    //     {formHTML:page}
+    //     );
 
 
     }
@@ -45,8 +63,9 @@ class FormEditor extends Component {
             <div className="form-group">
             <p>You may add, edit, drag'n'drop and remove fields on this page</p>
                         <button className="btn btn-primary mt-5 form-control mb-5 disabled" onClick={this.exportForm}>Export to the shop</button>
-                        <a className="btn btn-warning" href="mystoreofdev.shopify.com">Visualize</a>
-             <p>Here's how your order form will look like</p>
+                        <a className="btn btn-warning" href="mystoreofdev.shopify.com">Visualize on the shop (requiring exporting the form to the shop)</a>
+                        <button className="btn btn-secondary float-right" onClick={this.saveForm}>Save</button>
+             <p className="mt-5">Here's how your order form will look like</p>
               <hr/>
               <div id="form">
               <h1 className="text-center"></h1>

@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import {reactLocalStorage} from 'reactjs-localstorage';
+import axios from 'axios';
+
+const RequestHeaders = reactLocalStorage.getObject('RequestHeaders');
 
 class FormSettings extends Component {
 constructor(props) {
@@ -8,6 +12,7 @@ constructor(props) {
     };
   
 }
+    
 
     handleFormPlacementChange = (e) => {
         this.state.settings.form_placement = e.target.value;
@@ -53,7 +58,12 @@ constructor(props) {
 
     }
     saveSettings = (e) => {
-        console.log(this.state.settings);
+        axios({
+            method:'put',
+            url:'api/saveSettings',
+            data:{settings:this.state.settings},
+            headers: RequestHeaders
+        });
     }
 
     render() {

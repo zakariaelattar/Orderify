@@ -5,10 +5,20 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue:false
       },
       htmlCode:{
-          type: Sequelize.BLOB('long'),
-          defaultValue:false
+        type: Sequelize.BLOB('long'),
+        defaultValue:false
 
+    },      
+    innerCode:{
+      type: Sequelize.BLOB('long'),
+      defaultValue:false
+
+  },
+      settings:{
+        type: Sequelize.BLOB('long'),
+        defaultValue:false
       }
+
 
 
     });

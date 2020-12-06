@@ -9,7 +9,6 @@ const cookie = require('cookie');
 const nonce = require('nonce')();
 const querystring = require('querystring');
 const request = require('request-promise');
-const db = require("./models/index");
 app.set('view engine','ejs');
 const apiKey = "e25c4d9a47c79d4667c1f00a6712a7c8";
 const apiSecret = "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";
@@ -17,31 +16,44 @@ const scopes = 'read_products write_orders read_orders read_draft_orders write_d
 const forwardingAddress = "https://0edc10beeb69.ngrok.io"; // Replace this with your HTTPS Forwarding address
 const ordersService = require("./services/Order");
 const themeService = require("./services/Theme");
+const db = require("./models");
+const shop = db.shop;
 
-//  db.sequelize.sync({force: false})
+//  db.sequelize.sync({force: true})
 //  .then(() => {
 //    console.log('Drop and Resync Db');
-//   // initial();
+//   initial();
 //  })
 //  .catch((err) =>{
 //    console.log(err)
 //  });
 // parse application/json
 app.use(express.json());
+
+initial = () => {
+  shop.create({
+    id: 1,
+    name: "mystoreofdev.myshopify.com"
+  });
+}
 app.get('/', (req, res) => {
   res.send('hello world');
 });
 app.get('/api/orders', (req, res) => {
   ordersService.getOrders(req,res);
 });
-app.get('/api/addModal', (req,res) => {
-  themeService.saveForm(form);
-});
 app.post('/api/exportModal', (req, res) => {
-
- themeService.exportModal(req,res);
-});
-app.post('/api/orders', (req, res) => {
+  themeService.exportModal(req,res);
+ });
+ app.post('/api/saveModal', (req, res) => {
+  themeService.saveModalInDatabase(req.body.formHTML);
+  
+ });
+ app.put('/api/saveSettings', (req, res) => {
+  themeService.saveSettingsInDatabase(req.body.settings);
+  
+ });
+ app.post('/api/orders', (req, res) => {
   ordersService.addOrder(req,res);
 
 

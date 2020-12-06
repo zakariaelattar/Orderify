@@ -28,6 +28,7 @@
     "graphql": "^15.4.0",
     "http-proxy-middleware": "^1.0.6",
     "jsdom": "^16.4.0",
+    "node-localstorage": "^2.1.6",
     "nonce": "^1.0.4",
     "path": "^0.12.7",
     "pg": "^8.5.1",
