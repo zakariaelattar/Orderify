@@ -24,7 +24,29 @@ var MODAL_CODE;
 // append the code to the parent file
 // send file throught PUT request
 
+/**
+ * method to apply settings on the product page
+ * @param {*} settings 
+ */
+const applySettings = (settings) => {
+  // form placement
+  switch(settings["form_placement"]) {
+    case 'disable_placement':
+    break;
+    case 'enable_on_product_page_only':
+    break;
+    case 'enabled_on_cart_page_only':
+    break;
+    case 'enable_on_both':
+    break;
+  }
+  // notice
+ if(settings['notice'] != '')
+ {
 
+ }
+
+}
 const mergeFormModal = (formHTML) => {
   let MODAL_CODE_CHUNK_1 = fs.readFileSync("public/modal_chunk_1.html","utf-8");
   let MODAL_CODE_CHUNK_2 = fs.readFileSync("public/modal_chunk_2.html","utf-8");
@@ -34,6 +56,10 @@ const mergeFormModal = (formHTML) => {
 //   x= await form.findAll();
 //   console.log(convertBlobToString(x[0].dataValues.htmlCode));
 // }
+/**
+ * Save the modal in the database
+ * @param {*} formHTML 
+ */
 exports.saveModalInDatabase = (formHTML) => {
   mergeFormModal(formHTML);
   form.create({
@@ -52,6 +78,10 @@ exports.saveModalInDatabase = (formHTML) => {
     console.log("some error occured");
   })
 }
+/**
+ * save or update settings in database
+ * @param {*} settings 
+ */
 exports.saveSettingsInDatabase = (settings) => {
     form.findOne(
       {
@@ -78,13 +108,22 @@ exports.saveSettingsInDatabase = (settings) => {
  
 }
 
-/** 
-get product page from shopify
-*/
+
+/**
+ * get product page from shopify API
+ * @param {*} url 
+ * @param {*} header 
+ */
 const getProductPage = async (url,header) => {
   return axios.get(url,{ headers: header });
 
 }
+/**
+ * Http method to update product page throught API
+ * @param {*} url 
+ * @param {*} header 
+ * @param {*} page_code 
+ */
 const putProductPage = async (url,header,page_code) => {
   return 
   axios.put(url,
@@ -98,6 +137,11 @@ const putProductPage = async (url,header,page_code) => {
 );
 
 }
+/**
+ * Method called from form editor to export the modal, this method include all those methods as steps
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.exportModal = async (req,res) => {
 
         let access_token = req.headers["x-shopify-access-token"];
@@ -125,38 +169,45 @@ exports.exportModal = async (req,res) => {
     
   
 }
-
-/** 
-making DOM management easier
-*/
+/**
+ * making DOM management easier
+ * @param {*} liquid_data 
+ */
 const bindResponseToDom = (liquid_data) => {
   return new JSDOM(liquid_data);
  
 }
-/** 
-extracting add to cart and buy now code to replace it by the built code
-*/
+/**
+ * extracting add to cart and buy now code to replace it by the built code
+ * @param {*} dom 
+ */
 const extractAddCartCode = (dom) => {
   return extractElementFromDocument(dom,"product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}");
   
 }
-/** 
-extracting by className from document
-*/
+/**
+ * extracting by className from document
+ * @param {*} dom 
+ * @param {*} className 
+ */
 const extractElementFromDocument = (dom, className) => {
   return dom.window.document.getElementsByClassName(className)[0];
 
 }
-/**  
-replace the code with the built code
-*/
+/**
+ * replace the code with the built code
+
+ * @param {*} modal_code 
+ * @param {*} original_code 
+ */
 const replaceCode = (modal_code, original_code) => {
   dom.window.document.getElementsByClassName("product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}")[0].innerHTML = modalCode;
 
 }
-/** 
-correcting document
-*/
+/**
+ * correcting document
+ * @param {*} html 
+ */
 const correctingDocument = (html) => {
 return html
 .replace(/" endif  /g, '" {% endif %}  ')
@@ -172,15 +223,17 @@ return html
  .replace(/" endunless/g,'" {%endunless');
 }
 
-/** 
-create a backup of the product page for a futur usage
-*/
+/**
+ * create a backup of the product page for a futur usage
+ */
 const createBackup = () => {
 
 }
-/** 
-save the product page and send it to shopify
-*/
+/**
+ * save the product page and send it to shopify
+ * @param {*} htmlCode 
+ * @param {*} accessToken 
+ */
 const save = async (htmlCode,accessToken) => {
   let access_token = accessToken;
   putProductPage(PUT_ASSET_ENDPOINT,
