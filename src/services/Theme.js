@@ -7,7 +7,7 @@ const { JSDOM } = jsdom;
 const GET_ASSET_ENDPOINT = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json?asset[key]=sections/product-template.liquid';
 const PUT_ASSET_ENDPOINT = 'https://mystoreofdev.myshopify.com/admin/api/2020-10/assets.json';
 const form = db.form;
-var shopRequestHeaders;
+var shopRequestHeaders={};
 var ressourceUtils = require('../utils/resources.utils');
 
 // product.liquid asset
@@ -41,10 +41,21 @@ const applySettings = (settings) => {
     break;
   }
   // notice
- if(settings['notice'] != '')
- {
+ if(settings['notice'] != '') {
 
  }
+ if(settings['show_vendor_in_the_popup']) {
+
+ }
+ if(settings['show_selected_list_of_products_in_the_popup']) {
+
+}
+if(settings['custom_html_for_thank_you_popup']) {
+
+}
+
+
+
 
 }
 const mergeFormModal = (formHTML) => {
@@ -61,6 +72,24 @@ const mergeFormModal = (formHTML) => {
  * @param {*} formHTML 
  */
 exports.saveModalInDatabase = (formHTML) => {
+  mergeFormModal(formHTML);
+  form.create({
+    id:null,
+    active:0,
+    htmlCode:MODAL_CODE,
+    innerCode:formHTML,
+    createdAt:null,
+    updatedAt:null,
+    shopId:1
+  })
+  .then(() => {
+    console.log("generated code in database");
+  })
+  .catch((err) => {
+    console.log("some error occured");
+  })
+}
+const saveModaltoDatabase = (formHTML) => {
   mergeFormModal(formHTML);
   form.create({
     id:null,
@@ -144,9 +173,9 @@ const putProductPage = async (url,header,page_code) => {
  */
 exports.exportModal = async (req,res) => {
 
-        let access_token = req.headers["x-shopify-access-token"];
+       let access_token = req.headers["x-shopify-access-token"];
         shopRequestHeaders = {'X-Shopify-Access-Token': access_token};
-        saveModalInDatabase(req.body.formHTML);
+        saveModaltoDatabase(req.body.formHTML);
        // getModalFormDB();
         getProductPage(GET_ASSET_ENDPOINT,shopRequestHeaders)
                 .then((shopify_response) => {
@@ -160,7 +189,7 @@ exports.exportModal = async (req,res) => {
               let page_body = dom_product_page.window.document.getElementsByTagName("BODY")[0].innerHTML;
               let final_code = correctingDocument(page_body);
 
-              save(final_code,access_token);
+              save(final_code,shopRequestHeaders);
              
     })
      .catch((err) => {
@@ -234,8 +263,8 @@ const createBackup = () => {
  * @param {*} htmlCode 
  * @param {*} accessToken 
  */
-const save = async (htmlCode,accessToken) => {
-  let access_token = accessToken;
+const save = async (htmlCode,shopRequestHeaders) => {
+console.log(shopRequestHeaders);
   putProductPage(PUT_ASSET_ENDPOINT,
      { headers: shopRequestHeaders },
       htmlCode) 

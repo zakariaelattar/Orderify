@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import fs from 'fs';
-import Fields from './fields';
+import Fields from "./fields"
 import axios from 'axios';
 import queryString from 'query-string';
 import {reactLocalStorage} from 'reactjs-localstorage';
@@ -68,7 +68,7 @@ class FormEditor extends Component {
              <p className="mt-5">Here's how your order form will look like</p>
               <hr/>
               <div id="form">
-              <h1 className="text-center"></h1>
+              <h1 className="text-center">{this.state.formSettings.form_header}</h1>
                 {this.state.fields.map((field,index) =>
                     <Fields key={index} field={field} />
                 )}

@@ -26,17 +26,17 @@ export default class CostumizeInput extends Component {
             <Router>
             <div>
             <Switch>
+                    <Route path="/sideMenu/costumizeInput/Heading" component={() => <Heading addField={this.props.addField} />} />
+                    <Route path="/sideMenu/costumizeInput/LastName" component={() => <LastName addField={this.props.addField} />} />
                     <Route path="/sideMenu/costumizeInput/FirstName" component={() => <FirstName addField={this.props.addField} />} />
-                    <Route path="/sideMenu/costumizeInput/LastName" component={LastName} />
-                    <Route path="/sideMenu/costumizeInput/Country" component={Country} />
-                    <Route path="/sideMenu/costumizeInput/Checkbox" component={Checkbox} />
-                    <Route path="/sideMenu/costumizeInput/Dropdown" component={Dropdown} />
-                    <Route path="/sideMenu/costumizeInput/EmailPhone" component={EmailPhone} />
-                    <Route path="/sideMenu/costumizeInput/State" component={State} />
-                    <Route path="/sideMenu/costumizeInput/Radio" component={Radio} />
-                    <Route path="/sideMenu/costumizeInput/Text" component={Text} />
-                    <Route path="/sideMenu/costumizeInput/TextArea" component={TextArea} />
-                    <Route path="/sideMenu/costumizeInput/Heading" component={Heading} />
+                    <Route path="/sideMenu/costumizeInput/Country" component={() => <Country addField={this.props.addField} />} />
+                    <Route path="/sideMenu/costumizeInput/Checkbox" component={() => <Checkbox addField={this.props.addField} />} />
+                    <Route path="/sideMenu/costumizeInput/Dropdown" component={() => <Dropdown addField={this.props.addField} />} />
+                    <Route path="/sideMenu/costumizeInput/EmailPhone" component={() => <EmailPhone addField={this.props.addField} />} />
+                    <Route path="/sideMenu/costumizeInput/State" component={() => <State addField={this.props.addField} />} />
+                    <Route path="/sideMenu/costumizeInput/Radio" component={() => <Radio addField={this.props.addField} />} />
+                    <Route path="/sideMenu/costumizeInput/Text" component={() => <Text addField={this.props.addField} />} />
+                    <Route path="/sideMenu/costumizeInput/TextArea" component={() => <TextArea addField={this.props.addField} />} />
             </Switch>
 
                 {/* <Link  class="btn btn-primary mt-4 float-right" to=" ">Back</Link>

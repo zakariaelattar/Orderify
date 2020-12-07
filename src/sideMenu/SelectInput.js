@@ -15,13 +15,15 @@ export default class SelectInput extends Component {
         }
         console.log(this.props.items);
     }
-    handleChange = () =>{
+    handleChange = (e) =>{
         //this.state.selected_field = document.getElementById("select_field").value;
         //this.state.field_custom_path = "/sideMenu/costumizeInput/"+this.state.selected_field;
+            console.log("target value:"+e.target.value);
+            this.props.parentCallback(e.target.value);
        
     }
     handleSubmit = () =>{
-        this.props.items.push(this.state);
+       // this.props.items.push(this.state);
  
     }
     render() {
@@ -41,8 +43,8 @@ export default class SelectInput extends Component {
                         <option value="Checkbox">Checkbox</option>
                         <option value="Radio">Radio</option>
                     </select>
-                    <Link  class="btn btn-primary mt-4 float-left" to=""> Back</Link>
-                    <Link  class="btn btn-success mt-4 float-right" onClick={this.handleSubmit} to={this.state.field_custom_path} > Next</Link>
+                    {/* <Link  class="btn btn-primary mt-4 float-left" to=""> Back</Link>
+                    <Link  class="btn btn-success mt-4 float-right" onClick={this.handleSubmit} to={this.state.field_custom_path} > Next</Link> */}
 
             </div>
         )

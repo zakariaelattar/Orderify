@@ -11,8 +11,15 @@ import SelectInput from './SelectInput';
 export default class index extends Component {
 constructor(props) {
     super(props);
-
+    this.state = {
+        selectedInput:""
+    };
+    
 }
+callbackFunction = (childData) => {
+    this.setState({selectedInput: childData})
+}
+
 
     render() {
         return (
@@ -26,10 +33,17 @@ constructor(props) {
 
                 <div className="container mt-5">
                 <Switch>
-                <Route path="/sideMenu/SelectInput" component={() => <SelectInput items={this.props.fields} />} />
-                <Route path="/sideMenu/CostumizeInput" component={() => <CostumizeInput items={this.props.fields} addField={this.props.addField} />} />
+                <Route path="/sideMenu/SelectInput" component={() => <SelectInput parentCallback = {this.callbackFunction} items={this.props.fields} />} />
+                <Route path="/sideMenu/CostumizeInput" component={
+                    () => <CostumizeInput 
+                items={this.props.fields} 
+                addField={this.props.addField} />
+                } />
                 </Switch>
                 </div>
+                <Link className="btn btn-primary" to={"/sideMenu/CostumizeInput/"+this.state.selectedInput}>
+                   next
+                </Link>
             </div>
             </Router>
         )
